@@ -20,8 +20,12 @@ window.onload = function(){
 		var freepict = (448 / 1000) * ftran;
 		//ユーザ数×１ヶ月の授業時間×トランザクション費ー無料分
 		var tran = ((usr * (lesson * 4.35)) * stran) - freepict;
+		//Google Speech-to-Text分
+		//時間計算１授業時間45分＝2700 秒→バッファ（15秒刻みで重複の発生もあるだろう）3000秒の１月分
+		var sttB = (lesson * 3000 * 4.35 );
+		var sttY = (usr * (sttB - 3600) / 15 * 0.6);
 		//想定ランニングコスト
-		var rf = aws + packy + tran;
+		var rf = aws + packy + tran + sttY;
 		//小数点以下切り捨て
 		var result = Math.floor(rf);
 		//AWS分
@@ -30,10 +34,16 @@ window.onload = function(){
 		//画像検索分
 		var ga = tran;
 		var garesult = Math.floor(ga);
+		//Google Speech-to-Text分
+		var stgl = sttY;
+		var stgresult = Math.floor(stgl);
+		
 		document.getElementById("cost").innerHTML = "約" + result + "円";
 		document.getElementById("ycost").innerHTML = "内訳";
 		document.getElementById("svcost").innerHTML = "AWS：約" + svresult + "円";
 		document.getElementById("gacost").innerHTML = "画像検索：約" + garesult + "円";
+		document.getElementById("stgcost").innerHTML = "Google 音声認識：約" + stgresult + "円";
+				
 		//ユーザ１人当たりの月額費用
 		//想定ランニングコスト／ユーザ数
 		var mf = rf / usr;
